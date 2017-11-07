@@ -1,0 +1,174 @@
+<?php
+namespace App\Http\Controllers\Purchaser;
+
+use App\Http\Requests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+
+use App\Company;
+use Validator, Input, Redirect, Session;
+use View;
+
+
+class ProfileController extends Controller
+{
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        // get all the companies
+        $companies = Company::all();
+
+        // load the view and pass the companies
+        return View::make('companies.index')
+            ->with('companies', $companies);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        // load the create form (app/views/companies/create.blade.php)
+        return View::make('companies.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // validate
+        // read more on validation at http://laravel.com/docs/validation
+        $rules = array(
+            'title' => 'required',
+            'operation_type' => 'required'
+        );
+        $validator = Validator::make(Input::all(), $rules);
+
+        // process the login
+        if ($validator->fails()) {
+            return Redirect::to('companies/create')
+                ->withErrors($validator)
+                ->withInput(Input::except('password'));
+        } else {
+            // store
+            $company = new Company();
+            $company->title             = Input::get('title');
+            $company->slug    = preg_replace('/[^a-z0-9]+/', '-', strtolower(Input::get('web_url')));
+            $company->web_url    = preg_replace('/[^a-z0-9.]+/', '-', strtolower(Input::get('web_url')));
+            $company->operation_type    = Input::get('operation_type');
+            $company->save();
+
+            // redirect
+            Session::flash('message', 'Successfully created company!');
+            return Redirect::to('purchaser/companies');
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        // get the company
+        $company = Company::find($id);
+
+        // show the view and pass the company to it
+        return View::make('companies.show')
+            ->with('company', $company);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        // get the company
+        $company = Company::find($id);
+
+        // show the edit form and pass the company
+        return View::make('companies.edit')
+            ->with('company', $company);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        // validate
+        // read more on validation at http://laravel.com/docs/validation
+        $rules = array(
+            'title' => 'required',
+            'operation_type' => 'required'
+        );
+        $validator = Validator::make(Input::all(), $rules);
+
+        // process the login
+        if ($validator->fails()) {
+            return Redirect::to('purchaser/companies/' . $id . '/edit')
+                ->withErrors($validator)
+                ->withInput(Input::except('password'));
+        } else {
+            // store
+            $company = Company::find($id);
+            $company->title             = Input::get('title');
+            $company->slug    = preg_replace('/[^a-z0-9]+/', '-', strtolower(Input::get('web_url')));
+            $company->web_url    = preg_replace('/[^a-z0-9.]+/', '-', strtolower(Input::get('web_url')));
+            $company->operation_type    = Input::get('operation_type');
+            $company->save();
+
+            // redirect
+            Session::flash('message', 'Successfully updated company!');
+            return Redirect::to('purchaser/companies');
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        // delete
+        $company = Company::find($id);
+        $company->delete();
+
+        // redirect
+        Session::flash('message', 'Successfully deleted the company!');
+        return Redirect::to('purchaser/companies');
+    }
+}
