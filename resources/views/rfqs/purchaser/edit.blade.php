@@ -190,7 +190,8 @@
                                     <div class="col-lg-10">
 
                                         <input id="_section" type="hidden" name="status" value="PUBLISHED">
-                                        {{ Form::submit('Publish the RFQ!', array('class' => 'btn btn-success')) }}
+                                        {{ Form::submit('Publish the RFQ!', array('class' => 'btn btn-success',
+                                                                                            'onclick' => 'return confirm(\'Are you sure you want to PUBLISH?\nYou can not change it any more and would be available for all suppliers. \')')) }}
 
                                     </div>
                                 </div>

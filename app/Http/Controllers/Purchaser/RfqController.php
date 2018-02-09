@@ -205,7 +205,7 @@ class RfqController extends Controller
 //                    RfqLog::createLog($rfq->id, Auth::user()->id, '', 'PUBLISHED_RFQ', Auth::user()->name . ' PUBLISHED the RFQ');
 
                 Session::flash('message', 'Successfully updated RFQ!');
-                return Redirect::to('purchaser/channels/' . $_channel_id);
+                return Redirect::to('purchaser/channels/' . $_channel_id. '/rfqs/' . $id . '/edit');
             }
         }
         return response()->view('errors.403');
@@ -232,7 +232,7 @@ class RfqController extends Controller
                 RfqLog::createLog($rfq->id, Auth::user()->id, '', 'PUBLISHED_RFQ', Auth::user()->name . ' PUBLISHED the RFQ');
 
                 Session::flash('message', 'Successfully updated RFQ!');
-                return Redirect::to('purchaser/channels/' . $_channel_id . '/rfqs/' . $id . '/edit');
+                return Redirect::to('purchaser/channels/' . $_channel_id);
             }
         }
         return response()->view('errors.403');

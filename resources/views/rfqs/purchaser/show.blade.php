@@ -62,6 +62,20 @@
                             <div class="m-widget19__content">
                                 <div class="m-widget25">
                                     <span style="font-size: 25px; text-align: center">RFQ Actions</span>
+
+                                    @if($rfq->status == 'DRAFTED')
+                                        <div class="m-widget25--progress">
+                                            <a href="{{$rfq->id . '/edit'}}"
+                                               class="btn m-btn--square  btn-secondary  btn-block m-btn--icon">
+                                            <span>
+                                                <i class="fa fa-edit"></i>
+                                                <span>Edit RFQ</span>
+                                            </span>
+                                            </a>
+                                        </div>
+                                    @endif
+
+
                                     @if($rfq->is1stLast7Days() && $rfq->status == 'NEGOTIATION' && $rfq->is_extended=='NO')
                                         <div class="m-widget25--progress">
                                             <a href="#"
