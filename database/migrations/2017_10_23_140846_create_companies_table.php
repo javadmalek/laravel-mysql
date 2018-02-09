@@ -32,6 +32,10 @@ class CreateCompaniesTable extends Migration
 
             // Basic Information
             $table->string('office_address');
+            $table->string('continent')->default('EUROPE');
+            $table->string('country_id')->default('45');
+            $table->string('country_name');
+
             $table->string('office_tele');
             $table->string('company_description');
             $table->string('web_url')->nullable();

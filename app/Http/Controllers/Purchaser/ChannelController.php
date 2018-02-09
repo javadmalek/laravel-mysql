@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Purchaser;
 
+use App\ChannelVariable;
 use App\Http\Requests;
+use App\Rfq;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -21,62 +23,77 @@ class ChannelController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $userType = Auth::user()->type;
         if ($userType == 'PURCHASER') {
-            $myChannels = Auth::user()->company->channels;
-            return View::make('channels.index')->with('channels', $myChannels);
-        } else if ($userType == 'SALESPERSON')
+            $myChannels = Channel::where([
+                ['_company_id', '=', Auth::user()->company->id],
+            ])
+                ->orderBy('id', 'desc')
+                ->paginate(10);
+            return View::make('channels.purchaser.index', ['channels' => $myChannels, 'filter_key' => '']);
+        } else if ($userType == 'SUPPLIER')
             return response()->view('errors.403');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function filter()
     {
-        // load the create form (app/views/channels/create.blade.php)
-        return View::make('channels.create');
+        $filter_key = Input::get('filter_key');
+        if ($filter_key) {
+            $userType = Auth::user()->type;
+            if ($userType == 'PURCHASER') {
+                $myChannels = Channel::where([
+                    ['_company_id', '=', Auth::user()->company->id],
+                    ['title', 'like', '%' . $filter_key . '%'],
+                ])
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+                return View::make('channels.purchaser.index', ['channels' => $myChannels, 'filter_key' => $filter_key]);
+            } else if ($userType == 'SUPPLIER')
+                return response()->view('errors.403');
+        } else
+            return $this->index();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
+    public function filterRfqs($_channel_id)
+    {
+        $userType = Auth::user()->type;
+        if ($userType == 'PURCHASER') {
+            $myChannel = Auth::user()->company->channels->find($_channel_id);
+            if ($myChannel) {
+                $whereArray = array(['_channel_id', '=', $_channel_id]);
+                $filter_key = Input::get('filter_key');
+                $rfqs = Rfq::where('_channel_id', '=', $_channel_id)
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+
+                return View::make('channels.purchaser.show', ['channel' => $myChannel, 'rfqs' => $rfqs, 'filter_key' => $filter_key]);
+            } else
+                return response()->view('errors.403');
+        } else if ($userType == 'SUPPLIER')
+            return response()->view('errors.403');
+    }
+
+    public function create()
+    {
+        return View::make('channels.purchaser.create');
+    }
+
     public function store(Request $request)
     {
-        // validate
-        // read more on validation at http://laravel.com/docs/validation
         $rules = array(
             'title' => 'required',
-            '_sector_id' => 'required',
-            '_sub_sector_id' => 'required',
-            '_group_id' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('channels/create')
-                ->withErrors($validator)
-                ->withInput(Input::except('password'));
+            return Redirect::to('purchaser/channels/create')
+                ->withErrors($validator);
         } else {
-            // store
             $channel = new Channel();
             $channel->title = Input::get('title');
-            $channel->_sector_id = Input::get('_sector_id');
-            $channel->_sub_sector_id = Input::get('_sub_sector_id');
-            $channel->_group_id = Input::get('_group_id');
             $channel->keywords = Input::get('keywords');
             $channel->description = Input::get('description');
             $channel->_company_id = Auth::user()->_company_id;
@@ -87,82 +104,57 @@ class ChannelController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         // get the channel
         $userType = Auth::user()->type;
         if ($userType == 'PURCHASER') {
             $myChannel = Auth::user()->company->channels->find($id);
-            if ($myChannel)
-                return View::make('channels.show')->with('channel', $myChannel);
+            if ($myChannel) {
+                $variables = ChannelVariable::where('_channel_id','=',$myChannel->id);
+                return View::make('channels.purchaser.show', ['channel' => $myChannel, 'rfqs' => $myChannel->rfqs, 'filter_key' => '']);//)->with('channel', $myChannel);
+            }
             else
                 return response()->view('errors.403');  // The Channel Id isn't yours! or Doesn't exist
 
-        } else if ($userType == 'SALESPERSON')
+        } else if ($userType == 'SUPPLIER')
             return response()->view('errors.403');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $userType = Auth::user()->type;
         if ($userType == 'PURCHASER') {
             $myChannel = Auth::user()->company->channels->find($id);
-            if ($myChannel)
-                return View::make('channels.edit')->with('channel', $myChannel);
-            else
+            if ($myChannel) {
+                $variables = ChannelVariable::where('_channel_id','=',$myChannel->id);
+                return View::make('channels.purchaser.edit', ['channel' => $myChannel, 'variables' => $variables]);
+            } else
                 return response()->view('errors.403');  // The Channel Id isn't yours! or Doesn't exist
-        } else if ($userType == 'SALESPERSON')
+        } else if ($userType == 'SUPPLIER')
             return response()->view('errors.403');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        // validate
-        // read more on validation at http://laravel.com/docs/validation
         $rules = array(
-            'title' => 'required',
-            '_sector_id' => 'required',
-            '_sub_sector_id' => 'required',
-            '_group_id' => 'required'
+            'title' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('channels/create')
-                ->withErrors($validator)
-                ->withInput(Input::except('password'));
+            return Redirect::to('purchaser/channels/create')
+                ->withErrors($validator);
         } else {
             // store
+            $channel = new Channel();
             $channel = Channel::where('id', '=', $id)
                 ->where('_company_id', Auth::user()->_company_id)->first();
             if ($channel) {
                 $channel->title = Input::get('title');
-                $channel->_sector_id = Input::get('_sector_id');
-                $channel->_sub_sector_id = Input::get('_sub_sector_id');
-                $channel->_group_id = Input::get('_group_id');
                 $channel->keywords = Input::get('keywords');
                 $channel->description = Input::get('description');
-                $channel->_company_id = Auth::user()->_company_id;
                 $channel->save();
 
                 //Auth::user()->company = $company;
@@ -173,29 +165,50 @@ class ChannelController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        // delete
         $userType = Auth::user()->type;
         if ($userType == 'PURCHASER') {
+
             $channel = Channel::where('id', $id)
                 ->where('_company_id', Auth::user()->_company_id)->first();
             if ($channel) {
-                $channel->delete();
+                if ($channel->canDelete()) {
+                    $channel->delete();
+                    $channel->variables()->delete();
 
-                // redirect
-                Session::flash('message', 'Successfully deleted the channel!');
-                return Redirect::to('purchaser/channels');
+                    Session::flash('message', 'Successfully deleted the channel!');
+                    return Redirect::to('purchaser/channels');
+                } else {
+                    Session::flash('message', 'Not succeed to DELETE CHANNEL because there is an RFQ for the requested CHANNEL!');
+                    return Redirect::to('purchaser/channels/');
+                }
             } else
-                return response()->view('errors.403');  // The Channel Id isn't yours! or Doesn't exist
+                return response()->view('errors.403');
 
-        } else if ($userType == 'SALESPERSON')
+        } else if ($userType == 'SUPPLIER')
             return response()->view('errors.403');
+    }
+
+    public function showall()
+    {
+        $_company_id = Auth::user()->_company_id;
+        $channels = Channel::where('_company_id', $_company_id)->paginate(10);
+        if ($channels)
+            return View::make('channels.purchaser.showall', ['channels' => $channels, '_company_id' => $_company_id, 'filter_key' => '']);
+        return response()->view('errors.403');
+    }
+
+    public function filterShowall()
+    {
+        $filter_key = Input::get('filter_key');
+        if ($filter_key != '') {
+            $_company_id = Auth::user()->_company_id;
+            $channels = Channel::where('_company_id', $_company_id)->paginate(10);
+            if ($channels)
+                return View::make('channels.purchaser.showall', ['channels' => $channels, '_company_id' => $_company_id, 'filter_key' => $filter_key]);
+            return response()->view('errors.403');
+        } else
+            return $this->showall();
     }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <title>
-        Metronic | Login Page - 5
+        TOOGLE | Login Page
     </title>
     <meta name="description" content="Latest updates and statistic charts">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -39,12 +39,12 @@
                     <div class="m-login__content">
                         <div class="m-login__logo">
                             <a href="#">
-                                <img src="../../assets/app/media/img//logos/logo-2.png">
+                                <img src="../../assets/images/logo2x.png">
                             </a>
                         </div>
                         <div class="m-login__title">
                             <h3>
-                                JOIN OUR GREAT INDUSTRIAL-CLOUD COMMUNITY GET FREE ACCOUNT
+                                JOIN OUR GREAT TOOGLE COMMUNITY GET FREE ACCOUNT
                             </h3>
                         </div>
                         <div class="m-login__desc">
@@ -66,9 +66,7 @@
             <div class="m-login__contanier">
                 <div class="m-login__signin">
                     <div class="m-login__head">
-                        <h3 class="m-login__title">
-                            Login To Your Account
-                        </h3>
+                        <h3 class="m-login__title">Login To Your Account</h3>
                     </div>
 
                     {{--Sign In--}}
@@ -80,8 +78,8 @@
                                    class="form-control m-input" name="email" value="{{ old('email') }}">
                             @if ($errors->has('email'))
                                 <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
+                                    <strong>{{ $errors->first('email') }}</strong>
+                                </span>
                             @endif
                         </div>
 
@@ -131,7 +129,7 @@
                         {{ csrf_field() }}
 
                         <div class="form-group m-form__group{{ $errors->has('name') ? ' has-error' : '' }}">
-                            <input class="form-control m-input" type="text" placeholder="Fullname" name="name" required
+                            <input class="form-control m-input" type="text" placeholder="Full Name" name="name" required
                                    value="{{ old('name') }}">
                             @if ($errors->has('name'))
                                 <span class="help-block">
@@ -164,9 +162,9 @@
                         </div>
 
                         <div class="form-group m-form__group{{ $errors->has('type') ? ' has-error' : '' }}">
-                                <select id="type" class="form-control m-select" name="type" >
-                                    <option value="PURCHASER">Purchaser Office</option>
-                                    <option value="SALESPERSON">Sales Office</option>
+                                <select id="type" class="form-control m-input" name="type" >
+                                    <option value="PURCHASER">Purchaser</option>
+                                    <option value="SUPPLIER">Supplier</option>
                                 </select>
 
                                 @if ($errors->has('type'))
@@ -184,6 +182,18 @@
                                 I Agree the
                                 <a href="#" class="m-link m-link--focus">
                                     terms and conditions
+                                </a>
+                                .
+                                <span></span>
+                            </label>
+                            <span class="m-form__help"></span>
+                        </div>
+                        <div class="m-login__form-sub">
+                            <label class="m-checkbox m-checkbox--focus">
+                                <input type="checkbox" name="nda" required>
+                                I Agree the
+                                <a href="#" class="m-link m-link--focus">
+                                    Non Disclosure Agreement
                                 </a>
                                 .
                                 <span></span>

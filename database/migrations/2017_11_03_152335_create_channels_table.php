@@ -16,15 +16,10 @@ class CreateChannelsTable extends Migration
             $table->increments('id');
 
             $table->string('title');
-            $table->string('_sector_id');
-            $table->string('_sub_sector_id');
-            $table->string('_group_id');
-
             $table->string('keywords')->nullable();
             $table->string('publish_type')->default('public');
-
             $table->string('_company_id');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

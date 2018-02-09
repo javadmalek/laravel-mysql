@@ -15,11 +15,22 @@ class DatabaseSeeder extends Seeder
 
         Model::unguard();
 
-        /// ToDo: Enable before Installation
+        /// ToDo: Enable all before Installation
 
 //        $this->call(ComapniesTableSeeder::class);
 //        $this->call(ChannelsTableSeeder::class);
-        $this->call(RfqsTableSeeder::class);
+//        $this->call(ChannelVariablesTableSeeder::class);
+
+//        $this->call(SectorsTableSeeder::class);
+//        $this->call(SubsectorsTableSeeder::class);
+//        $this->call(SubgroupsTableSeeder::class);*/
+
+//        $this->call(RfqsTableSeeder::class);
+//        $this->call(RfqSpecificationsTableSeeder::class);
+//        $this->call(RfqOffersTableSeeder::class);
+//        $this->call(RfqOffersDealsTableSeeder::class);
+
+//        $this->call(AllCountriesSeeder::class);
 
         Model::reguard();
     }

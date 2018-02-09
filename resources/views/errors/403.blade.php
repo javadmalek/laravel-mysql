@@ -8,7 +8,7 @@
 						</h1>
 					</span>
         <p class="m-error_desc">
-            OOPS! Whay are you here?!...
+            OOPS! Whey are you here?!...
         </p>
     </div>
 @endsection

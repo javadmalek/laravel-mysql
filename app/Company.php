@@ -6,36 +6,75 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'title', 'slug', 'operation_type', 'subscription_plan_type',
     ];
 
-    /**
-     * The Company has many users who are stored in users table
-     * it could be retrievable by Companies::find(1)->users
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function users()
     {
         return $this->hasMany('App\User', '_company_id');
-
     }
 
-    /**
-     * The Company has many channels who are stored in channels table
-     * it could be retrievable by Companies::find(1)->channels
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function channels()
     {
-        return $this->hasMany('App\Channel', '_company_id');
-
+        return $this->hasMany('App\Channel', '_company_id')->orderBy('id', 'desc');
     }
+
+    public function rfqs()
+    {
+        return $this->hasMany('App\Rfq', '_company_id')->orderBy('id', 'desc');
+    }
+
+    public function catalogs()
+    {
+        return $this->hasMany('App\CompanyCatalog', '_company_id');
+    }
+
+    public function offersOut()
+    {
+        return $this->hasMany('App\RfqOffer', '_supplier_company_id')->orderBy('id', 'desc');
+    }
+
+    public function offersIn()
+    {
+        return $this->hasMany('App\RfqOffer', '_purchaser_company_id')->orderBy('id', 'desc');
+    }
+
+    public function inbox()
+    {
+        return $this->hasMany('App\Message', '_receiver_company_id')->orderBy('id', 'desc');
+    }
+    public function outbox()
+    {
+        return $this->hasMany('App\Message', '_sender_company_id')->orderBy('id', 'desc');
+    }
+
+    /* Circle */
+    public function myCircle()
+    {
+        return $this->hasMany('App\Circle', '_src_company_id');
+    }
+
+    public function isInCircle($_dst_company_id)
+    {
+        return $this->hasMany('App\Circle', '_src_company_id')
+                        ->where('_dst_company_id', '=', $_dst_company_id);
+    }
+    public function amInCircle($_src_company_id)
+    {
+        return $this->hasMany('App\Circle', '_dst_company_id')
+                        ->where('_src_company_id', '=', $_src_company_id);
+    }
+
+    /* BLACKLIST ACTIONS*/
+    public function blockedMe()
+    {
+        return $this->hasMany('App\Blacklist', '_blocked_company_id');
+    }
+
+    public function blockedByMe()
+    {
+        return $this->hasMany('App\Blacklist', '_blocker_company_id');
+    }
+
 }

@@ -32,7 +32,7 @@ $factory->define(App\Company::class, function (Faker\Generator $faker) {
         'office_address' => ' Via Pier Carlo Boggio 59, 10138 Turin, IT',
         'office_tele' => '+39 011 090 33 34',
 
-        'company_description' => str_random(100),
+        'company_description' => $faker->paragraph,
         'web_url' => 'http://www.industrial-cloud.com',
         'contact_person' => 'Karim Zaitov',
         'latitude' => $faker->latitude,
@@ -58,10 +58,6 @@ $factory->define(App\Company::class, function (Faker\Generator $faker) {
 $factory->define(App\Channel::class, function (Faker\Generator $faker) {
     return [
         'title' => $faker->sentence,
-        '_sector_id' => '1',
-        '_sub_sector_id' => '1',
-        '_group_id' => '1',
-
         'keywords' => $faker->word,
         'publish_type' => 'public',
         'description' => $faker->paragraph,
@@ -69,11 +65,82 @@ $factory->define(App\Channel::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\ChannelVariable::class, function (Faker\Generator $faker) {
+    return [
+        '_channel_id' => 1,
+
+        'title' => $faker->sentence,
+        'variable' => 'T'
+    ];
+});
+
+//$factory->define(App\Sector::class, function (Faker\Generator $faker) {
+//    return [
+//        'status' => 'ACTIVE',
+//
+//        'title' => $faker->sentence,
+//        'description' => $faker->paragraph,
+//    ];
+//});
+
+//$factory->define(App\Subsector::class, function (Faker\Generator $faker) {
+//    return [
+//        '_sector_id' => 1,
+//        'status' => 'ACTIVE',
+//
+//        'title' => $faker->sentence,
+//        'description' => $faker->paragraph,
+//    ];
+//});
+
+//$factory->define(App\Subgroup::class, function (Faker\Generator $faker) {
+//    return [
+//        '_sector_id' => 1,
+//        '_subsector_id' => 1,
+//        'status' => 'ACTIVE',
+//
+//        'title' => $faker->sentence,
+//        'description' => $faker->paragraph,
+//    ];
+//});
+
 $factory->define(App\Rfq::class, function (Faker\Generator $faker) {
     return [
         '_channel_id' => 1,
+        '_type_id' => 1,
+        '_dimension_id' => 1,
+
         'title' => $faker->sentence,
         'deadline' => '2017-11-06',
-        'description' => $faker->paragraph
+        'description' => $faker->paragraph,
+
+        'internal_id' => 'VBS-213468984',
+        'status' => 'DRAFTED',
+
+        'expire_date' => '2017-11-06',
+        'total_price' => '10,0000,000',
+    ];
+});
+
+$factory->define(App\RfqSpecification::class, function (Faker\Generator $faker) {
+    return [
+        '_rfq_id' => 1,
+        '_section' => 'PRICE',
+
+        'key' => 'a price title',
+        'type' => 'EURO',
+        'value' => $faker->randomNumber(),
+        'description' => $faker->sentence,
+    ];
+});
+
+$factory->define(App\RfqOfferDeal::class, function (Faker\Generator $faker) {
+    return [
+        '_offer_id' => 1,
+        '_purchaser_id' => 1,
+//        '_supplier_id' => 1,
+
+        'status' => 'POSTED',
+        'description' => $faker->sentence,
     ];
 });

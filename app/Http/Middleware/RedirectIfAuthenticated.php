@@ -21,8 +21,8 @@ class RedirectIfAuthenticated
             $userType = Auth::user()->type;
             if ($userType == 'PURCHASER')
                 return redirect()->guest('purchaser');
-            else if ($userType == 'SALESPERSON')
-                return redirect()->guest('salesperson');
+            else if ($userType == 'SUPPLIER')
+                return redirect()->guest('supplier');
 
             return redirect('/');
         }

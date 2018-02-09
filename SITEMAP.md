@@ -12,7 +12,7 @@
     │      │      │      │      ├── Confirm a registartion ==> GoTo ListOfCompanies to set its accounts up
     │      │      │      │      └── Remove
     │      │      │      ├── Create Comapny
-    │      │      │      ├── List of Companies       # Both purchaser and salesperson companies can be merged here(suggested) or separated into two different sections
+    │      │      │      ├── List of Companies       # Both purchaser and Supplier companies can be merged here(suggested) or separated into two different sections
     │      │      │      │      ├── Update
     │      │      │      │      ├── Remove
     │      │      │      │      ├── View a profile
@@ -155,7 +155,7 @@
     │      │
     │      │
     │      │
-    │      ├── Sales Office User Dashboard     # called as Supplier or salesperson 
+    │      ├── Sales Office User Dashboard     # called as Supplier or Supplier 
     │      │      ├── Profile
     │      │      │      ├── view
     │      │      │      ├── Update

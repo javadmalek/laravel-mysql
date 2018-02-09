@@ -1,0 +1,27 @@
+URL: http://toogle.industrial-cloud.com:8000
+
+Supplier1:
+username: s1@cmp1.com
+password: qwer4321
+
+Supplier2:
+username: s2@cmp2.com
+password: qwer4321
+
+Supplier3:
+username: s3@cmp3.com
+password: qwer4321
+
+
+Purchaser1:
+username: p1@cmp1.com
+password: qwer4321
+
+Purchaser2:
+username: p2@cmp2.com
+password: qwer4321
+
+Purchaser3:
+username: p3@cmp3.com
+password: qwer4321
+

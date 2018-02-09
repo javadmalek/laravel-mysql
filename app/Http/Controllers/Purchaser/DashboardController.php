@@ -7,30 +7,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
+use App\Channel;
+//use App\RfqOffer;
+
+use Validator, Input, Redirect, Session;
+use View;
+
 class DashboardController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     * errors.403 : Access denied...
-     */
     public function index()
     {
-        $userType = Auth::user()->type;
-        if ($userType == 'PURCHASER')
-            return view('purchaser.dashboard');
-        else if ($userType == 'SALESPERSON')
+        $user = Auth::user();
+        if ($user->type == 'PURCHASER' ) {
+            $channels = Channel::all()->where('_company_id', $user->_company_id);
+            $myoffers = Auth::user()->company->offersIn;
+            if ($channels)
+                return View::make('purchaser.dashboard', ['channels' => $channels, 'offers' => $myoffers, '_company_id' => $user->_company_id, 'filter_key' => '']);
+            return response()->view('errors.403');
+        }
+        else if ($user->type == 'SUPPLIER')
             return response()->view('errors.403');
     }
 }

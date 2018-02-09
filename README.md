@@ -187,3 +187,68 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+
+
+
+
+# MINIO S3 FILESYSTEM SETTINGS
+------------------------------
+###File storage disk info
+``` 
+disks' => [
+           ... ,
+           
+           'minio' => [
+               'driver' => 'minio',
+               'key' => env('MINIO_KEY'),
+               'secret' => env('MINIO_SECRET'),
+               'region' => 'us-east-1',
+               'bucket' => env('MINIO_BUCKET'),
+               'endpoint' => env('MINIO_ENDPOINT')
+           ]
+       ],
+```
+
+### .env values
+```
+FILESYSTEM_CLOUD=minio
+MINIO_KEY=F6XIAVGFEX3P1F6CE9UX
+MINIO_SECRET=UdAQMtwNmv92X/NurTQiukRQWv9nNEA8OrKKB79m
+MINIO_BUCKET=sigit
+MINIO_ENDPOINT=http://localhost:9000
+```
+
+### RFQ files url
+The file name encrypted by md5 method to create a unique name. 
+```
+minio/sigit/channels/_channel_id/rfqs/_rfqs_id
+minio/sigit/channels/2/rfqs/5/
+```
+
+#### 1. Prerequisites
+
+Install Minio Server from [here](https://www.minio.io/downloads.html).
+
+#### 2. Install Required Dependency for Laravel
+
+Install `league/flysystem` package for [`aws-s3`](https://github.com/coraxster/flysystem-aws-s3-v3-minio)  :
+fork based on https://github.com/thephpleague/flysystem-aws-s3-v3
+```
+composer require coraxster/flysystem-aws-s3-v3-minio
+```
+
+#### 3. Create Minio Storage ServiceProvider 
+    - Create `MinioStorageServiceProvider.php` file in `app/Providers/` directory with this content:
+    - Register service provider by adding this line in `config/app.php` on `providers` section :  
+    - Add config for minio in `disks` section of `config/filesystems.php` file :
+    - Note : `region` is not required & can be set to anything.
+
+#### 4. Use Storage with Minio in Laravel
+Now you can use `disk` method on storage facade to use minio driver :  
+```php
+Storage::disk('minio')->put('avatars/1', $fileContents);
+```
+Or you can set default cloud driver to `minio` in `filesystems.php` config file :
+```php
+'cloud' => env('FILESYSTEM_CLOUD', 'minio'),
+```

@@ -1,3 +1,3 @@
 CONTRIBUTORS
 =======================
-* Javad Malek Shahkoohi - <mrjavad@gmail.com> Developer, Solution architect
+* Javad Malek Shahkoohi - <mrjavad@gmail.com> Architecture, Developer, Solution architect
