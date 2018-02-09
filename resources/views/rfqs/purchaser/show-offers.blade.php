@@ -75,6 +75,14 @@
                                 </a>
                                 @include('rfqs.purchaser.send-message')
 
+                                @if($value->status === 'POSTED' && $rfq->status === 'NEGOTIATION')
+                                    <a class="btn m-btn--square  btn-outline-info"
+                                       href="#" data-toggle="modal"
+                                       data-target="#ask2modify_model{{ $value->id }}"><i class="fa fa-edit"></i>Ask to Modify
+                                    </a>
+                                    @include('rfqs.purchaser.ask2modify')
+                                @endif
+
                             </td>
                         </tr>
                     @endforeach
